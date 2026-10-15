@@ -57,7 +57,8 @@ def _setup(context):
     task = Node(
         package='sorting_cell_task', executable='sorting_task', output='screen',
         parameters=[{'use_sim_time': True, 'cell_config': cell_config,
-                     'belt_speed': belt_speed}])
+                     'belt_speed': belt_speed,
+                     'spawn_enabled': arg('spawn_enabled') == 'true'}])
     results_dir = arg('results_dir') or os.path.join(os.path.expanduser('~'), 'sorting_results',
                                                      os.path.basename(scenario).replace('.yaml', ''))
     duration = float(arg('eval_duration'))

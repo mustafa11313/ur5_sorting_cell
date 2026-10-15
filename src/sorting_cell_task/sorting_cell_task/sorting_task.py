@@ -270,6 +270,7 @@ class SortingTask(Node):
         self.declare_parameter('pick_x', 0.0)
         self.declare_parameter('pick_window', [-0.2, 0.3])
         self.declare_parameter('stop_x', 0.2)
+        self.declare_parameter('spawn_enabled', True)
         self.declare_parameter('settle_time', 0.6)
         self.declare_parameter('approach_height', 0.10)
         self.declare_parameter('place_height', 0.24)
@@ -299,6 +300,9 @@ class SortingTask(Node):
         self.motion = MotionClient(self, self.get_parameter('velocity_scaling').value,
                                    self.get_parameter('acceleration_scaling').value)
         self.belt_pub = self.create_publisher(Float64, '/conveyor/cmd_speed', 10)
+        self.spawn_pub = self.create_publisher(Bool, '/parts/spawn_enable', 10)
+        self.spawn_released = False
+        self.ready = False
         self.attach_pub = self.create_publisher(Bool, '/gripper/attach', 10)
         self.event_pub = self.create_publisher(SortEvent, '/sorting/events', 10)
         self.tree_pub = self.create_publisher(String, '/sorting/tree', 1)
@@ -313,7 +317,6 @@ class SortingTask(Node):
         self.create_timer(1.0 / self.get_parameter('tick_rate').value, self._tick,
                           callback_group=MutuallyExclusiveCallbackGroup())
         self.create_timer(0.1, self._supervise_belt, callback_group=reentrant)
-        self.ready = False
 
     # ------------------------------------------------------------- tree
     def _build_tree(self):
@@ -382,6 +385,15 @@ class SortingTask(Node):
         self._supervise_belt()
 
     def _supervise_belt(self):
+        if not self.ready:
+            # hold the line until the robot is up (MoveIt, controllers and the
+            # detector can take a while on a slow machine), so nothing passes unsorted
+            self.belt_pub.publish(Float64(data=0.0))
+            self.spawn_pub.publish(Bool(data=False))
+            return
+        if not self.spawn_released:
+            self.spawn_pub.publish(Bool(data=bool(self.get_parameter('spawn_enabled').value)))
+            self.spawn_released = True
         speed = 0.0 if self.belt_hold else self.params['belt_speed']
         if speed > 0.0 and self.robot_busy:
             # a part is about to leave the reachable window while the robot is busy
@@ -481,6 +493,9 @@ class SortingTask(Node):
         res = self.motion.move_to_joints(READY_JOINTS, 'PTP')
         self.get_logger().info(f'moved to ready: {res.message}')
         self.motion.set_gripper(0.08)
+        self.get_logger().info('waiting for the part detector ...')
+        while rclpy.ok() and self.parts_stamp == 0.0:
+            time.sleep(0.2)
         self.ready = True
         self.get_logger().info('sorting started')
 
