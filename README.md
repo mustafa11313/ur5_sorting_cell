@@ -54,7 +54,25 @@ reaches mAP50 0.95 and mAP50-95 0.77 on the validation split:
   <img src="docs/media/confusion_matrix_normalized.png" width="49%"/>
 </p>
 
-<!-- CLASSICAL -->
+### YOLO vs. the classical baseline
+
+The same scenarios with `backend:=classical`, which uses hand-written rules on the
+measured height and shape and a red-pixel check for defects
+([full table](results/classical/summary.md)):
+
+| Scenario | Pick success (YOLO / classical) | Sorting accuracy (YOLO / classical) |
+|---|---|---|
+| nominal | 100 % / 100 % | 100 % / 100 % |
+| touching | 100 % / 100 % | 97.0 % / 90.9 % |
+| new_variants | 100 % / 100 % | 100 % / 96.9 % |
+| dim_light | 100 % / 0 % | 100 % / n/a |
+| fast_belt | 100 % / 56.9 % | 94.4 % / 79.3 % |
+
+The rules hold up in good conditions but break down when they're pushed. Under
+the dim scenario's higher sensor noise, they accept depth noise as parts and
+misjudge heights, so every pick missed (0 of 17 attempts before the run was
+stopped). The learned detector only lets through depth blobs that it also sees
+in the image, which filters out the phantom parts.
 
 ## Architecture
 
