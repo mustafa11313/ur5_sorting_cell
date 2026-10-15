@@ -40,6 +40,7 @@
       <spawn_enabled>${spawn_enabled}</spawn_enabled>
       <spawn_x>-1.45</spawn_x>
       <spawn_interval>${spawn_interval}</spawn_interval>
+      <spawn_mode>${spawn_mode}</spawn_mode>
       <spawn_y_jitter>0.07</spawn_y_jitter>
       <defect_ratio>${defect_ratio}</defect_ratio>
       <touching_probability>${touching_probability}</touching_probability>

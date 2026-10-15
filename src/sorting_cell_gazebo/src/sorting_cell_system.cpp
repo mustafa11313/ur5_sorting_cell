@@ -144,6 +144,11 @@ public:
 
     spawnX_ = param<double>(sdf, "spawn_x", -1.4);
     spawnInterval_ = param<double>(sdf, "spawn_interval", 6.0);
+    // "distance": the feed clock only runs while the belt moves (scaled by its
+    // speed), so parts arrive evenly spaced however long the robot stops the
+    // belt. "time": a fixed arrival rate, for stress tests that overload the cell.
+    feedByDistance_ = param<std::string>(sdf, "spawn_mode", "distance") != "time";
+    nominalSpeed_ = std::max(1e-3, std::abs(speed_));
     spawnEnabled_ = param<bool>(sdf, "spawn_enabled", true);
     yJitter_ = param<double>(sdf, "spawn_y_jitter", 0.07);
     defectRatio_ = param<double>(sdf, "defect_ratio", 0.25);
@@ -205,7 +210,6 @@ public:
     if (info.paused) {
       return;
     }
-    const double now = secs(info.simTime);
     const double dt = secs(info.dt);
 
     std::lock_guard<std::mutex> lock(mutex_);
@@ -221,7 +225,10 @@ public:
     }
 
     // --- spawning -------------------------------------------------------
-    if (spawnEnabled_ && now >= nextSpawn_ &&
+    if (spawnEnabled_) {
+      feedClock_ += feedByDistance_ ? dt * std::abs(speed_) / nominalSpeed_ : dt;
+    }
+    if (spawnEnabled_ && feedClock_ >= nextSpawn_ &&
       (maxParts_ <= 0 || spawnedCount_ < maxParts_))
     {
       const double y = beltY_ + Uniform(-yJitter_, yJitter_);
@@ -238,7 +245,7 @@ public:
           SpawnPart(ecm, spawnX_ + Uniform(-0.01, 0.01), y + side * (0.058 + Uniform(-0.003, 0.003)));
         }
       }
-      nextSpawn_ = now + spawnInterval_ * Uniform(0.8, 1.2);
+      nextSpawn_ = feedClock_ + spawnInterval_ * Uniform(0.8, 1.2);
     }
 
     // --- grasp requests -------------------------------------------------
@@ -638,6 +645,8 @@ private:
   bool spawnEnabled_{true}, clearRequested_{false}, attachedDirty_{true};
   int maxParts_{0}, spawnedCount_{0};
   double nextSpawn_{2.0}, lastStatePub_{-1.0};
+  double feedClock_{0.0}, nominalSpeed_{0.08};
+  bool feedByDistance_{true};
   std::vector<PartType> types_;
   std::vector<Bin> bins_;
   std::map<std::string, PartState> parts_;

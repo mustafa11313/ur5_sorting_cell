@@ -97,7 +97,9 @@ def main():
             cmd = ['ros2', 'launch', 'sorting_cell_bringup', 'sorting_cell.launch.py',
                    f'scenario:={scenario}', 'headless:=true', 'rviz:=false',
                    f'backend:={args.backend}', f'seed:={args.seed}',
-                   f'eval_duration:={args.duration}', f'results_dir:={out}']
+                   f'eval_duration:={args.duration}', f'results_dir:={out}',
+                   # fixed arrival rate, so the scenarios measure the same demand
+                   'world_overrides:=spawn_mode=time']
             with open(os.path.join(out, 'launch.log'), 'w') as log:
                 run_isolated(cmd, log, timeout=args.duration * 4 + 300)
         path = os.path.join(out, 'metrics.json')

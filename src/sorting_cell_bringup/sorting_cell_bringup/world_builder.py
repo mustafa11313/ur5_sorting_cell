@@ -14,6 +14,7 @@ import yaml
 DEFAULTS = {
     'belt_speed': 0.08,
     'spawn_interval': 7.0,
+    'spawn_mode': 'distance',
     'spawn_enabled': 'true',
     'defect_ratio': 0.25,
     'touching_probability': 0.0,
