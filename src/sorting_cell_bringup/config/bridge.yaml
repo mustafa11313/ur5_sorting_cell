@@ -1,0 +1,77 @@
+# ros_gz_bridge topics between Gazebo (Ignition transport) and ROS 2.
+- ros_topic_name: /clock
+  gz_topic_name: /clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  gz_type_name: ignition.msgs.Clock
+  direction: GZ_TO_ROS
+
+# overhead RGB-D camera
+- ros_topic_name: /camera/image_raw
+  gz_topic_name: /camera/image
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS
+- ros_topic_name: /camera/depth/image_raw
+  gz_topic_name: /camera/depth_image
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS
+- ros_topic_name: /camera/camera_info
+  gz_topic_name: /camera/camera_info
+  ros_type_name: sensor_msgs/msg/CameraInfo
+  gz_type_name: ignition.msgs.CameraInfo
+  direction: GZ_TO_ROS
+
+# conveyor
+- ros_topic_name: /conveyor/cmd_speed
+  gz_topic_name: /conveyor/cmd_speed
+  ros_type_name: std_msgs/msg/Float64
+  gz_type_name: ignition.msgs.Double
+  direction: ROS_TO_GZ
+- ros_topic_name: /conveyor/speed
+  gz_topic_name: /conveyor/speed
+  ros_type_name: std_msgs/msg/Float64
+  gz_type_name: ignition.msgs.Double
+  direction: GZ_TO_ROS
+
+# grasp assist
+- ros_topic_name: /gripper/attach
+  gz_topic_name: /gripper/attach
+  ros_type_name: std_msgs/msg/Bool
+  gz_type_name: ignition.msgs.Boolean
+  direction: ROS_TO_GZ
+- ros_topic_name: /gripper/attached
+  gz_topic_name: /gripper/attached
+  ros_type_name: std_msgs/msg/String
+  gz_type_name: ignition.msgs.StringMsg
+  direction: GZ_TO_ROS
+
+# part spawner / ground truth (ground truth is used for evaluation and
+# dataset labelling only, never by the robot's decision making)
+- ros_topic_name: /parts/spawn_enable
+  gz_topic_name: /parts/spawn_enable
+  ros_type_name: std_msgs/msg/Bool
+  gz_type_name: ignition.msgs.Boolean
+  direction: ROS_TO_GZ
+- ros_topic_name: /parts/clear
+  gz_topic_name: /parts/clear
+  ros_type_name: std_msgs/msg/Bool
+  gz_type_name: ignition.msgs.Boolean
+  direction: ROS_TO_GZ
+- ros_topic_name: /parts/ground_truth
+  gz_topic_name: /parts/ground_truth
+  ros_type_name: tf2_msgs/msg/TFMessage
+  gz_type_name: ignition.msgs.Pose_V
+  direction: GZ_TO_ROS
+- ros_topic_name: /parts/events
+  gz_topic_name: /parts/events
+  ros_type_name: std_msgs/msg/String
+  gz_type_name: ignition.msgs.StringMsg
+  direction: GZ_TO_ROS
+
+# optional showcase camera (world_overrides:="showcase_camera=true"), used for videos
+- ros_topic_name: /showcase/image
+  gz_topic_name: /showcase/image
+  ros_type_name: sensor_msgs/msg/Image
+  gz_type_name: ignition.msgs.Image
+  direction: GZ_TO_ROS

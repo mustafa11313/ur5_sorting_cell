@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>sorting_cell_gazebo</name>
+  <version>0.1.0</version>
+  <description>Gazebo (Ignition Fortress) world and the SortingCell system plugin: conveyor, part spawner, grasp assist and bin bookkeeping.</description>
+  <maintainer email="ali@example.com">Ali</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Gazebo Fortress (gz-sim 6, gz-transport 11, gz-msgs 8, sdformat 12) comes with ros_gz_sim -->
+  <depend>ros_gz_sim</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

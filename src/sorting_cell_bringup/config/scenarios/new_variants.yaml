@@ -1,0 +1,15 @@
+# Unseen variants: +/-15 % size and shifted colours.
+world:
+  belt_speed: 0.08
+  spawn_interval: 7.0
+  defect_ratio: 0.25
+  touching_probability: 0.0
+  scale_jitter: 0.15
+  colour_jitter: 0.18
+  slip_probability: 0.0
+  part_types: cube cylinder hex_nut
+  sun: 0.8
+  lamp: 0.5
+  ambient: 0.45
+  sun_direction: -0.3 0.2 -1.0
+  image_noise: 0.005

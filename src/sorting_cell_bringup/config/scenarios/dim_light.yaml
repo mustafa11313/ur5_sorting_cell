@@ -1,0 +1,15 @@
+# Lighting change: dim, low-angle light with stronger sensor noise.
+world:
+  belt_speed: 0.08
+  spawn_interval: 7.0
+  defect_ratio: 0.25
+  touching_probability: 0.0
+  scale_jitter: 0.0
+  colour_jitter: 0.0
+  slip_probability: 0.0
+  part_types: cube cylinder hex_nut
+  sun: 0.3
+  lamp: 0.15
+  ambient: 0.2
+  sun_direction: -0.8 0.5 -0.4
+  image_noise: 0.02

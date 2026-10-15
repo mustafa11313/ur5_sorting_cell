@@ -1,0 +1,27 @@
+# Geometry of the cell, shared by the planning scene, perception and task logic.
+# All values in the world frame (metres / radians).
+cell:
+  robot_base: [0.0, 0.0, 0.75]
+  pedestal: {center: [0.0, 0.0, 0.375], size: [0.3, 0.3, 0.75]}
+  belt:
+    center_y: 0.6
+    surface_z: 0.72
+    width: 0.3
+    min_x: -1.6
+    max_x: 1.6
+  bin_rack: {center: [0.0, -0.5, 0.245], size: [0.96, 0.26, 0.49]}
+  bins:
+    # name: [x, y, floor_z]; inner size 0.18 x 0.18, wall height 0.12
+    bin_cube: [-0.36, -0.5, 0.49]
+    bin_cylinder: [-0.12, -0.5, 0.49]
+    bin_hex_nut: [0.12, -0.5, 0.49]
+    bin_reject: [0.36, -0.5, 0.49]
+  camera_mast:
+    pole: {center: [0.0, 1.0, 0.85], size: [0.06, 0.06, 1.7]}
+    arm: {center: [0.0, 0.8, 1.6], size: [0.06, 0.42, 0.06]}
+    camera: {center: [0.0, 0.6, 1.55], size: [0.06, 0.14, 0.06]}
+  # ArUco calibration markers (DICT_4X4_50, 80 mm black square on a 100 mm plate)
+  markers:
+    - {id: 0, x: -0.30, y: 0.87, top_z: 0.745, yaw: 0.0}
+    - {id: 1, x: 0.30, y: 0.87, top_z: 0.745, yaw: 0.0}
+  marker_size: 0.08

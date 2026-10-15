@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+  Sorting cell robot: UR5 on a 0.75 m pedestal with a parallel-jaw gripper.
+  Only the robot lives here; the conveyor, bins and camera are part of the
+  Gazebo world and are added to MoveIt's planning scene by the task package.
+-->
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5">
+  <xacro:arg name="sim_ignition" default="true"/>
+  <xacro:arg name="controllers_file" default="$(find sorting_cell_bringup)/config/controllers.yaml"/>
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find sorting_cell_description)/urdf/gripper.xacro"/>
+  <xacro:include filename="$(find sorting_cell_description)/urdf/sorting_cell.ros2_control.xacro"/>
+
+  <!-- "Home" pose: tool pointing down, beside the robot and out of the camera view -->
+  <xacro:property name="home" value="${dict(shoulder_pan_joint=0.0, shoulder_lift_joint=-1.5708, elbow_joint=1.5708, wrist_1_joint=-1.5708, wrist_2_joint=-1.5708, wrist_3_joint=0.0)}"/>
+
+  <link name="world"/>
+
+  <xacro:ur_robot
+    name="ur5"
+    tf_prefix=""
+    parent="world"
+    joint_limits_parameters_file="$(find ur_description)/config/ur5/joint_limits.yaml"
+    kinematics_parameters_file="$(find ur_description)/config/ur5/default_kinematics.yaml"
+    physical_parameters_file="$(find ur_description)/config/ur5/physical_parameters.yaml"
+    visual_parameters_file="$(find ur_description)/config/ur5/visual_parameters.yaml"
+    ur_type="ur5"
+    generate_ros2_control_tag="false"
+    sim_ignition="$(arg sim_ignition)">
+    <origin xyz="0 0 0.75" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <xacro:parallel_gripper parent="tool0"/>
+
+  <xacro:sorting_cell_ros2_control sim_ignition="$(arg sim_ignition)" initial_positions="${home}"/>
+
+  <xacro:if value="$(arg sim_ignition)">
+    <gazebo>
+      <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(arg controllers_file)</parameters>
+      </plugin>
+    </gazebo>
+    <!-- keep gripper contacts soft and grippy -->
+    <gazebo reference="left_finger"><mu1>1.2</mu1><mu2>1.2</mu2></gazebo>
+    <gazebo reference="right_finger"><mu1>1.2</mu1><mu2>1.2</mu2></gazebo>
+  </xacro:if>
+</robot>

@@ -1,0 +1,15 @@
+# Used by the dataset recorder: dense, heavily randomized stream for training.
+world:
+  belt_speed: 0.12
+  spawn_interval: 1.6
+  defect_ratio: 0.4
+  touching_probability: 0.35
+  scale_jitter: 0.12
+  colour_jitter: 0.12
+  slip_probability: 0.0
+  part_types: cube cylinder hex_nut
+  sun: 0.7
+  lamp: 0.4
+  ambient: 0.4
+  sun_direction: -0.3 0.2 -1.0
+  image_noise: 0.01

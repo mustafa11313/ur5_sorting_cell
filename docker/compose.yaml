@@ -1,0 +1,38 @@
+# GUI apps (Gazebo, RViz) are shown on the host's X server:
+#   xhost +local:docker
+#   docker compose -f docker/compose.yaml run --rm cell \
+#     ros2 launch sorting_cell_bringup sorting_cell.launch.py
+services:
+  cell:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: ur5_sorting_cell:humble
+    network_mode: host
+    ipc: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../src:/ws/src
+      - ../results:/ws/results
+    devices:
+      - /dev/dri:/dev/dri          # Intel/AMD GPU acceleration for Gazebo rendering
+
+  # Same, with an NVIDIA GPU (needs nvidia-container-toolkit):
+  #   docker compose -f docker/compose.yaml run --rm cell-nvidia ...
+  cell-nvidia:
+    extends:
+      service: cell
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

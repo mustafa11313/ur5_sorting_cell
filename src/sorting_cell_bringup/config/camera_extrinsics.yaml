@@ -1,0 +1,8 @@
+# world -> camera_link (x forward along the optical axis, as in Gazebo).
+# The default is the nominal mounting pose; run
+#   ros2 run sorting_cell_perception calibrate_camera
+# to re-estimate it from the ArUco marker next to the belt.
+camera_link:
+  parent: world
+  xyz: [0.0, 0.6, 1.55]
+  rpy: [0.0, 1.5708, 1.5708]

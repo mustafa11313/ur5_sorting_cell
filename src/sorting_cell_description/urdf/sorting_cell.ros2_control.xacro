@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <!-- ros2_control system for the UR5 arm and both gripper fingers.
+       sim_ignition=true  -> gz_ros2_control (Gazebo Fortress)
+       sim_ignition=false -> mock_components (planning-only / RViz demos) -->
+  <xacro:macro name="sorting_cell_ros2_control" params="sim_ignition initial_positions">
+    <ros2_control name="sorting_cell_system" type="system">
+      <hardware>
+        <xacro:if value="${sim_ignition}">
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </xacro:if>
+        <xacro:unless value="${sim_ignition}">
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">true</param>
+        </xacro:unless>
+      </hardware>
+      <xacro:macro name="pos_joint" params="name initial">
+        <joint name="${name}">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">${initial}</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+        </joint>
+      </xacro:macro>
+      <xacro:pos_joint name="shoulder_pan_joint" initial="${initial_positions['shoulder_pan_joint']}"/>
+      <xacro:pos_joint name="shoulder_lift_joint" initial="${initial_positions['shoulder_lift_joint']}"/>
+      <xacro:pos_joint name="elbow_joint" initial="${initial_positions['elbow_joint']}"/>
+      <xacro:pos_joint name="wrist_1_joint" initial="${initial_positions['wrist_1_joint']}"/>
+      <xacro:pos_joint name="wrist_2_joint" initial="${initial_positions['wrist_2_joint']}"/>
+      <xacro:pos_joint name="wrist_3_joint" initial="${initial_positions['wrist_3_joint']}"/>
+      <xacro:pos_joint name="left_finger_joint" initial="0.04"/>
+      <xacro:pos_joint name="right_finger_joint" initial="0.04"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

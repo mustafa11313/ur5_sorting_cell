@@ -1,0 +1,9 @@
+build/
+install/
+log/
+results/*/events.csv
+**/__pycache__/
+*.pyc
+.pytest_cache/
+datasets/
+runs/
