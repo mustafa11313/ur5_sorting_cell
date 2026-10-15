@@ -12,7 +12,9 @@ detects and classifies them (YOLOv8 or a classical baseline), estimates their po
 from depth, and a behavior tree picks each part with MoveIt 2 and drops it into the
 right bin: one bin per part type, plus a reject bin for defective parts.
 
-<!-- DEMO -->
+![UR5 sorting cell demo](docs/media/demo.gif)
+
+*The cell sorting parts in Gazebo (3x speed).*
 
 **Highlights**
 
