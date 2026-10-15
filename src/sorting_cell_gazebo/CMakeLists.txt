@@ -16,7 +16,6 @@ find_package(ignition-msgs8 REQUIRED)
 find_package(sdformat12 REQUIRED)
 
 add_library(SortingCellSystem SHARED src/sorting_cell_system.cpp)
-target_include_directories(SortingCellSystem PRIVATE include)
 target_link_libraries(SortingCellSystem
   ignition-gazebo6::ignition-gazebo6
   ignition-plugin1::register

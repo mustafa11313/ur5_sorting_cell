@@ -17,7 +17,7 @@ set +u; source /opt/ros/humble/setup.bash; set -u
 
 echo "== apt packages"
 sudo apt-get update
-sudo apt-get install -y python3-colcon-common-extensions python3-rosdep python3-pip \
+sudo apt-get install -y python3-colcon-common-extensions python3-rosdep python3-pip python3-pytest \
   ros-humble-moveit ros-humble-pilz-industrial-motion-planner \
   ros-humble-ros2-control ros-humble-ros2-controllers ros-humble-gz-ros2-control \
   ros-humble-ur-description ros-humble-ros-gz ros-humble-py-trees ros-humble-vision-msgs
