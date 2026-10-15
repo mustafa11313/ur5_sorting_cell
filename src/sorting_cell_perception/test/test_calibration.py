@@ -12,8 +12,8 @@ from sorting_cell_perception.ros_utils import rpy_to_matrix
 def test_pnp_recovers_a_bumped_camera():
     T_true = camera_pose(height=1.53, x=0.01, y=0.61)
     T_true[:3, :3] = T_true[:3, :3] @ rpy_to_matrix(0.02, -0.015, 0.03)
-    world = np.vstack([marker_corners_world(-0.3, 0.87, 0.745, 0.0, 0.08),
-                       marker_corners_world(0.3, 0.87, 0.745, 0.0, 0.08)])
+    world = np.vstack([marker_corners_world(-0.3, 0.835, 0.745, 0.0, 0.08),
+                       marker_corners_world(0.3, 0.835, 0.745, 0.0, 0.08)])
     T_cw = np.linalg.inv(T_true)
     rvec, _ = cv2.Rodrigues(T_cw[:3, :3])
     img, _ = cv2.projectPoints(world, rvec, T_cw[:3, 3], K, None)

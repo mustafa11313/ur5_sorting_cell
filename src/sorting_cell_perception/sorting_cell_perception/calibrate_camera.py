@@ -32,13 +32,28 @@ T_LINK_OPTICAL = np.eye(4)
 T_LINK_OPTICAL[:3, :3] = rpy_to_matrix(-math.pi / 2, 0.0, -math.pi / 2)
 
 
+def make_aruco_detector():
+    """Return detect(gray) -> (corners, ids) for OpenCV < 4.7 and >= 4.7 alike."""
+    aruco = cv2.aruco
+    if hasattr(aruco, 'ArucoDetector'):          # OpenCV >= 4.7
+        params = aruco.DetectorParameters()
+        params.cornerRefinementMethod = aruco.CORNER_REFINE_SUBPIX
+        detector = aruco.ArucoDetector(aruco.getPredefinedDictionary(aruco.DICT_4X4_50), params)
+        return lambda gray: detector.detectMarkers(gray)[:2]
+    dictionary = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    params = aruco.DetectorParameters_create()
+    params.cornerRefinementMethod = aruco.CORNER_REFINE_SUBPIX
+    return lambda gray: aruco.detectMarkers(gray, dictionary, parameters=params)[:2]
+
+
 def marker_corners_world(x, y, z, yaw, size):
     """World coordinates of the 4 marker corners in ArUco order (TL, TR, BR, BL).
 
-    Seen from above with the marker's yaw = 0, its top edge faces +y.
+    With yaw = 0 the marker's top edge faces +x: that is how Gazebo maps the
+    texture onto the top face of the plate (verified against rendered images).
     """
     s = size / 2.0
-    local = np.array([[-s, s], [s, s], [s, -s], [-s, -s]])
+    local = np.array([[s, s], [s, -s], [-s, -s], [-s, s]])
     c, sn = math.cos(yaw), math.sin(yaw)
     R = np.array([[c, -sn], [sn, c]])
     xy = local @ R.T + np.array([x, y])
@@ -91,9 +106,7 @@ class CalibrateCamera(Node):
         self.markers = {m['id']: m for m in cell['markers']}
         self.frames = self.get_parameter('frames').value
         self.output = self.get_parameter('output').value
-        self.dictionary = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
-        self.params = cv2.aruco.DetectorParameters_create()
-        self.params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
+        self.detect = make_aruco_detector()
         self.bridge = CvBridge()
         self.K = None
         self.poses, self.errors = [], []
@@ -113,7 +126,7 @@ class CalibrateCamera(Node):
         if self.K is None or self.done:
             return
         gray = cv2.cvtColor(self.bridge.imgmsg_to_cv2(msg, 'bgr8'), cv2.COLOR_BGR2GRAY)
-        corners, ids, _ = cv2.aruco.detectMarkers(gray, self.dictionary, parameters=self.params)
+        corners, ids = self.detect(gray)
         if ids is None:
             self.get_logger().warn('no markers visible', throttle_duration_sec=3.0)
             return

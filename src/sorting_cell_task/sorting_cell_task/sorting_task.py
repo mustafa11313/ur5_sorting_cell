@@ -125,7 +125,7 @@ class WaitForPart(TaskBehaviour):
         self.task.set_belt_hold(False)
 
     def update(self):
-        parts = self.task.fresh_parts(max_age=0.5)
+        parts = self.task.fresh_parts(max_age=1.0)
         trigger = self.task.params['pick_x']
         if any(p.x >= trigger and p.x <= self.task.params['pick_window'][1] for p in parts):
             return Status.SUCCESS
@@ -136,7 +136,7 @@ class StopBelt(TaskBehaviour):
     def update(self):
         self.task.robot_busy = True
         self.task.set_belt_hold(True)
-        self.task.cycle_start = time.monotonic()
+        self.task.cycle_start = self.task.now()
         return Status.SUCCESS
 
 
@@ -150,13 +150,14 @@ class Settle(TaskBehaviour):
     """Wait until the belt is stopped and detections newer than the stop exist."""
 
     def initialise(self):
-        self.t0 = time.monotonic()
+        self.t0 = self.task.now()
 
     def update(self):
-        waited = time.monotonic() - self.t0
+        waited = self.task.now() - self.t0
         if waited < self.task.params['settle_time']:
             return Status.RUNNING
-        if self.task.fresh_parts(newer_than=self.t0 + 0.3):
+        # images taken after the belt has stopped (camera time, not arrival time)
+        if self.task.fresh_parts(max_age=2.0, newer_than=self.t0 + 0.3):
             return Status.SUCCESS
         return Status.FAILURE if waited > 4.0 else Status.RUNNING
 
@@ -180,7 +181,7 @@ class SelectTarget(TaskBehaviour):
                 f'target {part.id} {part.cls} ({part.conf:.2f}) at ({part.x:.3f}, {part.y:.3f}) '
                 f'grasp yaw {math.degrees(grasp.psi):.0f} deg -> {t.target_bin}')
             return Status.SUCCESS
-        t.failure_reason = 'no graspable part in the pick window'
+        t.failure_reason = t.failure_reason or 'no graspable part in the pick window'
         return Status.FAILURE
 
 
@@ -229,7 +230,7 @@ class PlacePart(AsyncAction):
         t.release()
         t.detach_from_planning_scene()
         t.motion.set_gripper(0.08)
-        t.cycle_time = time.monotonic() - t.cycle_start
+        t.cycle_time = t.now() - t.cycle_start
         res = t.motion.move_to_joints(READY_JOINTS, 'PTP')
         if not res.ok:
             t.get_logger().warn(f'return to ready failed: {res.message}')
@@ -353,15 +354,18 @@ class SortingTask(Node):
         self.attempts = 0
         self.failure_reason = ''
         self.failure_code = SortEvent.RESULT_LOST
-        self.cycle_start = time.monotonic()
+        self.cycle_start = self.now()
         self.cycle_time = 0.0
         self.held_part = ''
 
     # ------------------------------------------------------------- state
+    def now(self):
+        return self.get_clock().now().nanoseconds * 1e-9
+
     def _on_parts(self, msg):
-        now = time.monotonic()
-        self.parts = [Part(d, now) for d in msg.detections]
-        self.parts_stamp = now
+        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9   # image time
+        self.parts = [Part(d, stamp) for d in msg.detections]
+        self.parts_stamp = stamp
 
     def _on_attached(self, msg):
         self.attached_part = msg.data
@@ -369,7 +373,7 @@ class SortingTask(Node):
     def fresh_parts(self, max_age=0.5, newer_than=None):
         if newer_than is not None and self.parts_stamp < newer_than:
             return []
-        if time.monotonic() - self.parts_stamp > max_age:
+        if self.now() - self.parts_stamp > max_age:
             return []
         return list(self.parts)
 
@@ -462,7 +466,7 @@ class SortingTask(Node):
         ev.result = result
         ev.failure_reason = self.failure_reason if result != SortEvent.RESULT_SORTED else ''
         ev.attempts = self.attempts
-        ev.cycle_time = float(self.cycle_time or (time.monotonic() - self.cycle_start))
+        ev.cycle_time = float(self.cycle_time or (self.now() - self.cycle_start))
         self.event_pub.publish(ev)
         names = {0: 'SORTED', 1: 'GRASP_FAILED', 2: 'PLANNING_FAILED', 3: 'LOST'}
         self.get_logger().info(

@@ -1,7 +1,8 @@
 build/
 install/
 log/
-results/*/events.csv
+results/**/events.csv
+results/**/launch.log
 **/__pycache__/
 *.pyc
 .pytest_cache/

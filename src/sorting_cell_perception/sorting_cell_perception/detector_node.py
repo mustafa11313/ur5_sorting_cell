@@ -26,7 +26,7 @@ from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
 from message_filters import ApproximateTimeSynchronizer, Subscriber
 from rclpy.node import Node
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSProfile, ReliabilityPolicy, qos_profile_sensor_data
 from sensor_msgs.msg import CameraInfo, Image
 from std_msgs.msg import Float64
 from tf2_ros import Buffer, TransformBroadcaster, TransformListener
@@ -59,6 +59,7 @@ class DetectorNode(Node):
         self.declare_parameter('world_frame', 'world')
         self.declare_parameter('publish_debug_image', True)
         self.declare_parameter('publish_tf', True)
+        self.declare_parameter('torch_threads', 2)
 
         self.bridge = CvBridge()
         self.world_frame = self.get_parameter('world_frame').value
@@ -78,6 +79,8 @@ class DetectorNode(Node):
                     f'YOLO model "{model}" not found, falling back to the classical backend. '
                     'Train one with: ros2 run sorting_cell_perception train_yolo')
             else:
+                import torch
+                torch.set_num_threads(self.get_parameter('torch_threads').value)
                 from .yolo_backend import YoloDetector
                 self.yolo = YoloDetector(model, self.get_parameter('confidence_threshold').value,
                                          self.get_parameter('device').value)
@@ -92,10 +95,11 @@ class DetectorNode(Node):
         self.create_subscription(CameraInfo, '/camera/camera_info', self._on_info,
                                  qos_profile_sensor_data)
         self.create_subscription(Float64, '/conveyor/speed', self._on_speed, 10)
-        rgb = Subscriber(self, Image, '/camera/image_raw', qos_profile=qos_profile_sensor_data)
-        depth = Subscriber(self, Image, '/camera/depth/image_raw',
-                           qos_profile=qos_profile_sensor_data)
-        self.sync = ApproximateTimeSynchronizer([rgb, depth], queue_size=5, slop=0.05)
+        # depth 1: always process the newest frame instead of working through a backlog
+        latest = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        rgb = Subscriber(self, Image, '/camera/image_raw', qos_profile=latest)
+        depth = Subscriber(self, Image, '/camera/depth/image_raw', qos_profile=latest)
+        self.sync = ApproximateTimeSynchronizer([rgb, depth], queue_size=2, slop=0.05)
         self.sync.registerCallback(self._on_images)
         self.get_logger().info(f'part detector running with the {self.backend} backend')
 

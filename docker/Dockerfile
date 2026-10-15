@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir --index-url ${TORCH_INDEX} torch torchvision \
- && pip3 install --no-cache-dir "ultralytics==8.3.40" "numpy<2" "opencv-python-headless<4.11"
+ && pip3 install --no-cache-dir "ultralytics==8.3.40" "numpy<2" \
+ # torch/ultralytics pull in a newer setuptools, which breaks colcon builds on Humble
+ && pip3 install --no-cache-dir "setuptools<70"
 
 WORKDIR /ws
 COPY src /ws/src

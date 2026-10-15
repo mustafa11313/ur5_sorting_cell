@@ -1,0 +1,75 @@
+{
+  "scenario": "dim_light",
+  "sim_time_s": 300.0,
+  "parts_spawned": 43,
+  "parts_binned": 31,
+  "parts_correct_bin": 31,
+  "parts_missed": 0,
+  "parts_dropped": 0,
+  "pick_attempts": 31,
+  "successful_grasps": 31,
+  "failed_grasps": 0,
+  "planning_failures": 0,
+  "pick_success_rate": 1.0,
+  "sorting_accuracy": 1.0,
+  "throughput_ppm": 6.2,
+  "cycle_time_mean_s": 6.5,
+  "cycle_time_median_s": 6.56,
+  "cycle_time_p95_s": 6.89,
+  "classification_accuracy": 1.0,
+  "defect_precision": 1.0,
+  "defect_recall": 1.0,
+  "per_class": {
+    "cube": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 6
+    },
+    "cube_defect": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 6
+    },
+    "cylinder": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 6
+    },
+    "cylinder_defect": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 2
+    },
+    "hex_nut": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 8
+    },
+    "hex_nut_defect": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "support": 3
+    }
+  },
+  "confusion": {
+    "hex_nut": {
+      "hex_nut": 8
+    },
+    "cube": {
+      "cube": 6
+    },
+    "cylinder_defect": {
+      "cylinder_defect": 2
+    },
+    "cube_defect": {
+      "cube_defect": 6
+    },
+    "cylinder": {
+      "cylinder": 6
+    },
+    "hex_nut_defect": {
+      "hex_nut_defect": 3
+    }
+  },
+  "failure_reasons": {}
+}

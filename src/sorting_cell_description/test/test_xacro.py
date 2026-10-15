@@ -19,7 +19,7 @@ def test_xacro_expands(sim, tmp_path):
         check=True, capture_output=True, text=True).stdout
     root = ET.fromstring(out)
     links = {link.get('name') for link in root.iter('link')}
-    joints = {j.get('name'): j.get('type') for j in root.iter('joint')}
+    joints = {j.get('name'): j.get('type') for j in root.findall('joint')}
     assert {'world', 'base_link', 'tool0', 'gripper_base_link', 'tcp'} <= links
     assert joints['left_finger_joint'] == 'prismatic'
     assert joints['right_finger_joint'] == 'prismatic'

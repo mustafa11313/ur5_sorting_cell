@@ -11,8 +11,10 @@ results/<backend>/<scenario>/ and the summary to results/<backend>/summary.md.
 import argparse
 import json
 import os
+import signal
 import subprocess
 import sys
+import time
 
 SCENARIOS = ['nominal', 'touching', 'new_variants', 'dim_light', 'fast_belt']
 
@@ -29,6 +31,30 @@ COLUMNS = [
     ('Plan fails', 'planning_failures', None),
     ('Missed', 'parts_missed', None),
 ]
+
+
+def run_isolated(cmd, log, timeout):
+    """Run a launch in its own process group and make sure nothing outlives it.
+
+    `ign gazebo` is started through a ruby wrapper; when the launch shuts down,
+    the wrapper is killed but the server process can survive and keep
+    publishing /clock and /controller_manager, which breaks the next scenario.
+    """
+    proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+    try:
+        proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, signal.SIGINT)
+        try:
+            proc.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            pass
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    subprocess.run(['pkill', '-9', '-f', 'ign gazebo -s'], check=False)
+    time.sleep(3)
 
 
 def fmt(v, kind):
@@ -73,8 +99,7 @@ def main():
                    f'backend:={args.backend}', f'seed:={args.seed}',
                    f'eval_duration:={args.duration}', f'results_dir:={out}']
             with open(os.path.join(out, 'launch.log'), 'w') as log:
-                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT,
-                               timeout=args.duration * 4 + 300)
+                run_isolated(cmd, log, timeout=args.duration * 4 + 300)
         path = os.path.join(out, 'metrics.json')
         if os.path.exists(path):
             with open(path) as f:

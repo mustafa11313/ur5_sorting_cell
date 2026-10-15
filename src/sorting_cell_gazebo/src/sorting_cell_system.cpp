@@ -224,12 +224,19 @@ public:
     if (spawnEnabled_ && now >= nextSpawn_ &&
       (maxParts_ <= 0 || spawnedCount_ < maxParts_))
     {
-      SpawnPart(ecm, spawnX_ + Uniform(-0.02, 0.02));
+      const double y = beltY_ + Uniform(-yJitter_, yJitter_);
+      SpawnPart(ecm, spawnX_ + Uniform(-0.02, 0.02), y);
       if (touchingProb_ > 0.0 && Uniform(0, 1) < touchingProb_ &&
         (maxParts_ <= 0 || spawnedCount_ < maxParts_))
       {
-        // second part right next to the first one (touching / clustered)
-        SpawnPart(ecm, spawnX_ + 0.055 + Uniform(-0.005, 0.005));
+        // second part right next to the first one (touching / clustered),
+        // either behind it on the belt or beside it
+        if (Uniform(0, 1) < 0.5) {
+          SpawnPart(ecm, spawnX_ + 0.058 + Uniform(-0.003, 0.003), y + Uniform(-0.01, 0.01));
+        } else {
+          const double side = (y > beltY_) ? -1.0 : 1.0;
+          SpawnPart(ecm, spawnX_ + Uniform(-0.01, 0.01), y + side * (0.058 + Uniform(-0.003, 0.003)));
+        }
       }
       nextSpawn_ = now + spawnInterval_ * Uniform(0.8, 1.2);
     }
@@ -456,7 +463,7 @@ private:
     return sdf.str();
   }
 
-  void SpawnPart(gz::EntityComponentManager & ecm, double x)
+  void SpawnPart(gz::EntityComponentManager & ecm, double x, double y)
   {
     const PartType & base = types_[std::uniform_int_distribution<size_t>(0, types_.size() - 1)(rng_)];
     const bool defect = Uniform(0, 1) < defectRatio_;
@@ -477,7 +484,7 @@ private:
     double height = 0.04;
     // first pass to get the height for the spawn z
     PartSdf(name.str(), base, false, scale, colour, Pose3d::Zero, height);
-    Pose3d pose(x, beltY_ + Uniform(-yJitter_, yJitter_), beltZ_ + height / 2 + 0.002,
+    Pose3d pose(x, y, beltZ_ + height / 2 + 0.002,
       0, 0, Uniform(-M_PI, M_PI));
     std::string sdfStr = PartSdf(name.str(), base, defect, scale, colour, pose, height);
 

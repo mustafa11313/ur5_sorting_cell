@@ -22,6 +22,6 @@ cell:
     camera: {center: [0.0, 0.6, 1.55], size: [0.06, 0.14, 0.06]}
   # ArUco calibration markers (DICT_4X4_50, 80 mm black square on a 100 mm plate)
   markers:
-    - {id: 0, x: -0.30, y: 0.87, top_z: 0.745, yaw: 0.0}
-    - {id: 1, x: 0.30, y: 0.87, top_z: 0.745, yaw: 0.0}
+    - {id: 0, x: -0.30, y: 0.835, top_z: 0.745, yaw: 0.0}
+    - {id: 1, x: 0.30, y: 0.835, top_z: 0.745, yaw: 0.0}
   marker_size: 0.08
