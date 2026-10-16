@@ -19,7 +19,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Ali',
-    maintainer_email='ali@example.com',
+    maintainer_email='mustafa11313@users.noreply.github.com',
     description='Launch files and configuration for the UR5 sorting cell.',
     license='AGPL-3.0-only',
     tests_require=['pytest'],

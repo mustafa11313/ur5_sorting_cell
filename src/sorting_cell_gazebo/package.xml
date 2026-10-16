@@ -4,7 +4,7 @@
   <name>sorting_cell_gazebo</name>
   <version>0.1.0</version>
   <description>Gazebo (Ignition Fortress) world and the SortingCell system plugin: conveyor, part spawner, grasp assist and bin bookkeeping.</description>
-  <maintainer email="ali@example.com">Ali</maintainer>
+  <maintainer email="mustafa11313@users.noreply.github.com">Ali</maintainer>
   <license>AGPL-3.0-only</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

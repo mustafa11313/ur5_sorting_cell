@@ -4,7 +4,7 @@
   <name>sorting_cell_description</name>
   <version>0.1.0</version>
   <description>URDF/xacro of the sorting cell robot: UR5 on a pedestal with a parallel-jaw gripper and ros2_control tags for Gazebo or mock hardware.</description>
-  <maintainer email="ali@example.com">Ali</maintainer>
+  <maintainer email="mustafa11313@users.noreply.github.com">Ali</maintainer>
   <license>AGPL-3.0-only</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
