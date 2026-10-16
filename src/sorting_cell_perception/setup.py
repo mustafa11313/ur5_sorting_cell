@@ -17,7 +17,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Ali',
+    maintainer='Mustafa Almohamad',
     maintainer_email='mustafa11313@users.noreply.github.com',
     description='Detection, classification and pose estimation for the UR5 sorting cell.',
     license='AGPL-3.0-only',

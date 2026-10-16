@@ -246,6 +246,8 @@ src/
 
 ## License
 
+Copyright (C) 2026 Mustafa Almohamad.
+
 AGPL-3.0 (see [LICENSE](LICENSE)). The perception backend and the bundled
 model are built on [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics),
 which is AGPL-3.0, so this project uses the same license. The UR5 model comes from

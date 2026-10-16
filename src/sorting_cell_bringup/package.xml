@@ -4,7 +4,7 @@
   <name>sorting_cell_bringup</name>
   <version>0.1.0</version>
   <description>Launch files, scenarios and configuration that bring up the complete sorting cell.</description>
-  <maintainer email="mustafa11313@users.noreply.github.com">Ali</maintainer>
+  <maintainer email="mustafa11313@users.noreply.github.com">Mustafa Almohamad</maintainer>
   <license>AGPL-3.0-only</license>
 
   <exec_depend>sorting_cell_description</exec_depend>
