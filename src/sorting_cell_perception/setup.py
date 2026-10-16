@@ -20,7 +20,7 @@ setup(
     maintainer='Ali',
     maintainer_email='ali@example.com',
     description='Detection, classification and pose estimation for the UR5 sorting cell.',
-    license='MIT',
+    license='AGPL-3.0-only',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

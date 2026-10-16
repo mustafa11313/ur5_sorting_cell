@@ -21,6 +21,6 @@ setup(
     maintainer='Ali',
     maintainer_email='ali@example.com',
     description='Launch files and configuration for the UR5 sorting cell.',
-    license='MIT',
+    license='AGPL-3.0-only',
     tests_require=['pytest'],
 )

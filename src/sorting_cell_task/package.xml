@@ -5,7 +5,7 @@
   <version>0.1.0</version>
   <description>Decision making for the sorting cell: a py_trees behavior tree that selects parts, plans grasps, drives MoveIt 2 and the conveyor, plus the planning scene and the metrics/evaluation node.</description>
   <maintainer email="ali@example.com">Ali</maintainer>
-  <license>MIT</license>
+  <license>AGPL-3.0-only</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

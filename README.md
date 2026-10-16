@@ -4,7 +4,7 @@
 ![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-blue)
 ![Gazebo Fortress](https://img.shields.io/badge/Gazebo-Fortress-orange)
 ![MoveIt 2](https://img.shields.io/badge/MoveIt-2-green)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)
 
 A UR5 with a parallel gripper works next to a conveyor on a simulated production
 line. Parts arrive at random positions and orientations; an overhead RGB-D camera
@@ -246,4 +246,7 @@ src/
 
 ## License
 
-MIT
+AGPL-3.0 (see [LICENSE](LICENSE)). The perception backend and the bundled
+model are built on [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics),
+which is AGPL-3.0, so this project uses the same license. The UR5 model comes from
+`ur_description` (BSD-3-Clause) and is not redistributed here.
